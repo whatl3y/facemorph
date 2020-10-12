@@ -1,0 +1,31 @@
+{
+  "name": "morf",
+  "version": "0.0.1",
+  "author": "Lance Whatley <whatl3y@gmail.com>",
+  "description": "Morph/warp images of faces to each other.",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whatl3y/morf"
+  },
+  "scripts": {
+    "build": "gulp build",
+    "test": "mocha --exit -r ts-node/register --recursive './src/**/*.spec.ts' --grep morf"
+  },
+  "devDependencies": {
+    "@types/mocha": "^7.0.2",
+    "gulp": "^4.0.2",
+    "gulp-plumber": "^1.2.1",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "mocha": "^7.2.0",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs-node": "^1.5.1",
+    "canvas": "^2.6.1",
+    "face-api.js": "^0.22.0",
+    "image-size": "^0.9.1"
+  }
+}
