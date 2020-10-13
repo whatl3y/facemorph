@@ -9,13 +9,14 @@ I wanted a simple way to take a set of pictures we take periodically of our newb
 **Assumptions/Limitations**
 
 - Each image in the created GIF must contain exactly one face. If no faces or more than one are detected, an error will be thrown indicating such.
-- There needs to be at least two images provided to be morphed.
-- Faces are detected using the face detection model provided in [face-api.js](https://github.com/justadudewhohacks/face-api.js/). Human faces work best, where animal faces might or might not work.
-- For best results, use images with white (or light) backgrounds.
+- A minimum of two images are required to be provided in [`createGif` (see below)](https://github.com/whatl3y/facemorph#facemorphcreategif).
+- Faces are detected using the model provided in [face-api.js](https://github.com/justadudewhohacks/face-api.js/). Human faces work best, where animal faces might or might not work.
+- For best results, use images with white (or consistent) backgrounds.
 
 ## Simple Usage
 
 ```js
+import fs from 'fs'
 import Facemorph from 'facemorph'
 
 const facemorph = Facemorph()
