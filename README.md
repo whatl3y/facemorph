@@ -36,8 +36,8 @@ await fs.promises.writeFile(`my.gif`, gifBuffer)
 ```js
 import Facemorph from 'facemorph'
 
-// `frames` is the number of frames between each face morph in the GIF
-const facemorph = Facemorph(/* [frames: number = 20] */)
+// `frames: number = 20` is the number of frames between each face morph in the GIF
+const facemorph = Facemorph(/* frames */)
 ```
 
 ### facemorph.createGif
@@ -48,7 +48,7 @@ Create a GIF with morphed faces between all provided images.
 // images: MorfImages[] - Array of at least 2 images that can be a string, Readable stream, or raw Buffer
 // delayMs: number = 20 - The delay in milliseconds between each frame
 // repeat: number = 0 - Whether to repeat the GIF animation or not. -1: no repeat, 0 repeat
-await facemorph.createGif(images /* [, delayMs, repeat] */) // : Promise<Buffer>
+await facemorph.createGif(images /*, delayMs, repeat */) // : Promise<Buffer>
 ```
 
 ### facemorph.createFrames
