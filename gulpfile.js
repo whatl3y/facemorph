@@ -12,4 +12,8 @@ gulp.task('src', function() {
     .pipe(gulp.dest('./dist'))
 })
 
-gulp.task('build', gulp.parallel('src'))
+gulp.task('src:js', function() {
+  return gulp.src('./src/**/*.js').pipe(gulp.dest('./dist'))
+})
+
+gulp.task('build', gulp.parallel('src', 'src:js'))
