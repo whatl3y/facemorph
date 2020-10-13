@@ -13,6 +13,12 @@ I wanted a simple way to take a set of pictures we take periodically of our newb
 - Faces are detected using the model provided in [face-api.js](https://github.com/justadudewhohacks/face-api.js/). Human faces work best, where animal faces might or might not work.
 - For best results, use images with white (or consistent) backgrounds.
 
+## Install
+
+```sh
+$ npm install facemorph
+```
+
 ## Simple Usage
 
 ```js
