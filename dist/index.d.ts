@@ -11,7 +11,7 @@ interface IFacemorphee {
 export default function Facemorph(frames?: number): {
     frames: number;
     setFrames(f: number): number;
-    createGif(imgs: FacemorphImage[], gifDelayMs?: number): Promise<Buffer>;
+    createGif(imgs: FacemorphImage[], gifDelayMs?: number, repeat?: number): Promise<Buffer>;
     createFrames(imgs: FacemorphImage[]): Promise<Buffer[][]>;
     makeImagesConsistent(imgs: FacemorphImage[]): Promise<Buffer[]>;
     getBuffersFromFrames(imageDataFrames: ImageData[][], width?: number, height?: number): Promise<Buffer[][]>;

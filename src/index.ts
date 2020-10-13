@@ -25,7 +25,8 @@ export default function Facemorph(frames: number = 20) {
 
     async createGif(
       imgs: FacemorphImage[],
-      gifDelayMs: number = 100
+      gifDelayMs: number = 100,
+      repeat: number = 0 // -1: no repeat, 0: repeat
     ): Promise<Buffer> {
       const allFrames = await this.createFrames(imgs)
       const frames = allFrames
@@ -36,7 +37,7 @@ export default function Facemorph(frames: number = 20) {
         .flat(1)
       const { width } = await ImageProcessor.sizeOf(frames[0])
       assert(width, 'width should be retrievable')
-      const gifer = GifCreator(width, width, gifDelayMs)
+      const gifer = GifCreator(width, width, gifDelayMs, repeat)
       return await gifer.create(...frames)
     },
 

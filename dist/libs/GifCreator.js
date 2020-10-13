@@ -10,7 +10,7 @@ const ImageProcessor_1 = __importDefault(require("./ImageProcessor"));
 // import pngFileStream from 'png-file-stream'
 const pngFileStream = require('png-file-stream');
 const repoTmpDir = path_1.default.join(__dirname, '..', '..', 'tmp');
-function GifCreator(width, height, delay = 100, repeat = -1, quality = 10) {
+function GifCreator(width, height, delay = 100, repeat = 0, quality = 10) {
     return {
         encoder: new gifencoder_1.default(width, height),
         async create(...buffers) {

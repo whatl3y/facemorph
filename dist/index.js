@@ -16,7 +16,8 @@ function Facemorph(frames = 20) {
         setFrames(f) {
             return (this.frames = f);
         },
-        async createGif(imgs, gifDelayMs = 100) {
+        async createGif(imgs, gifDelayMs = 100, repeat = 0 // -1: no repeat, 0: repeat
+        ) {
             const allFrames = await this.createFrames(imgs);
             const frames = allFrames
                 .map((buffers, i) => {
@@ -27,7 +28,7 @@ function Facemorph(frames = 20) {
                 .flat(1);
             const { width } = await ImageProcessor_1.default.sizeOf(frames[0]);
             assert_1.default(width, 'width should be retrievable');
-            const gifer = GifCreator_1.default(width, width, gifDelayMs);
+            const gifer = GifCreator_1.default(width, width, gifDelayMs, repeat);
             return await gifer.create(...frames);
         },
         async createFrames(imgs) {

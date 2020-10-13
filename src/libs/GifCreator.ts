@@ -12,7 +12,7 @@ export default function GifCreator(
   width: number,
   height: number,
   delay: number = 100,
-  repeat: number = -1,
+  repeat: number = 0,
   quality: number = 10
 ) {
   return {

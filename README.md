@@ -2,7 +2,7 @@
 
 Create animated gifs that morph faces between each other.
 
-<img src="https://user-images.githubusercontent.com/13718950/95853602-afd63680-0d23-11eb-8a0d-83533834e04e.gif" width="357">
+<img src="https://user-images.githubusercontent.com/13718950/95856421-fc237580-0d27-11eb-9e0c-12330660ccf5.gif" width="357">
 
 **Assumptions/Limitations**
 
@@ -29,3 +29,43 @@ await fs.promises.writeFile(`my.gif`, gifBuffer)
 ## API
 
 TODO
+
+### constructor
+
+```js
+import Facemorph from 'facemorph'
+
+// `frames` is the number of frames between each face morph in the GIF
+const facemorph = Facemorph((frames: number = 20))
+```
+
+### facemorph.createGif
+
+Create a GIF with morphed faces between all provided images.
+
+```js
+// images: MorfImages[] - Array of at least 2 images that can be a string, Readable stream, or raw Buffer
+// delayMs: number = 20 - The delay between each frame
+// repeat: number = 0 - Whether to repeat the GIF animation or not. -1: no repeat, 0 repeat
+await facemorph.createGif(images /* [, delayMs, repeat] */) // : Promise<Buffer>
+```
+
+### facemorph.createFrames
+
+Create an array of Buffers that are images of all the frames to be used
+to create an animated GIF of morphed faces. This is used inside of `createGif`,
+but could be used as a standalone if you want to take all the frames and do what
+you'd like with them
+
+```js
+// images: MorfImages[] - Array of at least 2 images that can be a string, Readable stream, or raw Buffer
+await facemorph.createFrames(images) // : Promise<Buffer[][]>
+```
+
+### facemorph.setFrames
+
+Reset the number of frames between each face morph.
+
+```js
+facemorph.setFrames(10) // : number
+```
