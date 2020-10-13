@@ -6,6 +6,8 @@ import ImageProcessor from './ImageProcessor'
 // import pngFileStream from 'png-file-stream'
 const pngFileStream = require('png-file-stream')
 
+const repoTmpDir = path.join(__dirname, '..', '..', 'tmp')
+
 export default function GifCreator(
   width: number,
   height: number,
@@ -17,25 +19,17 @@ export default function GifCreator(
     encoder: new GIFEncoder(width, height),
 
     async create(...buffers: Buffer[]): Promise<Buffer> {
-      const tmpDir = path.join(
-        __dirname,
-        '..',
-        '..',
-        'tmp',
-        Date.now().toString()
-      )
+      const instTmpDir = path.join(repoTmpDir, Date.now().toString())
 
       // create dir
-      try {
-        await fs.promises.mkdir(tmpDir)
-      } finally {
-      }
+      await createDirIgnoreErrors(repoTmpDir)
+      await createDirIgnoreErrors(instTmpDir)
 
       await Promise.all(
         buffers.map(async (buf, ind) => {
           await fs.promises.writeFile(
             path.join(
-              tmpDir,
+              instTmpDir,
               `img${(ind + 1).toString().padStart(5, '0')}.png`
             ),
             buf
@@ -47,13 +41,23 @@ export default function GifCreator(
         delay,
         quality,
       })
-      pngFileStream(path.join(tmpDir, '*.png')).pipe(writeStream)
+      pngFileStream(path.join(instTmpDir, '*.png')).pipe(writeStream)
       const finalGifBuffer = await ImageProcessor.streamToBuffer(writeStream)
-      try {
-        await fs.promises.rmdir(tmpDir, { recursive: true })
-      } finally {
-      }
+      await rmDirIgnoreErrors(instTmpDir)
+
       return finalGifBuffer
     },
   }
+}
+
+async function createDirIgnoreErrors(dir: string) {
+  try {
+    await fs.promises.mkdir(dir)
+  } catch (err) {}
+}
+
+async function rmDirIgnoreErrors(dir: string) {
+  try {
+    await fs.promises.rmdir(dir, { recursive: true })
+  } catch (err) {}
 }

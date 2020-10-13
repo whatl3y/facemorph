@@ -1,20 +1,20 @@
 import assert from 'assert'
 import fs from 'fs'
 import path from 'path'
-import Morf from '.'
+import Facemorph from '.'
 
-const morf = Morf()
+const facemorph = Facemorph()
 
-describe('morf', function() {
+describe('facemorph', function() {
   const imagesPath = path.join(__dirname, '..', 'images')
   const face1ImgPath = path.join(imagesPath, 'face1.png')
   const face2ImgPath = path.join(imagesPath, 'face2.png')
 
   describe('#createGif', function() {
     it(`should create a valid GIF buffer without error`, async function() {
-      const morf = Morf(20)
+      const facemorph = Facemorph(20)
       this.timeout(20000)
-      const gifBuffer: Buffer = await morf.createGif(
+      const gifBuffer: Buffer = await facemorph.createGif(
         [face1ImgPath, face2ImgPath, face1ImgPath],
         40
       )
@@ -30,7 +30,7 @@ describe('morf', function() {
       this.timeout(5000)
 
       try {
-        await morf.createFrames([face1ImgPath])
+        await facemorph.createFrames([face1ImgPath])
         assert.fail('should error before this line')
       } catch (err) {
         assert.strictEqual(true, err instanceof Error)
@@ -44,7 +44,7 @@ describe('morf', function() {
     it('should create a set of warped image frames', async function() {
       this.timeout(5000)
 
-      const buffers: Buffer[][] = await morf.createFrames([
+      const buffers: Buffer[][] = await facemorph.createFrames([
         face1ImgPath,
         face2ImgPath,
         face1ImgPath,

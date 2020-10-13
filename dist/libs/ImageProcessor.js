@@ -25,11 +25,16 @@ exports.default = {
     //   )
     //   return data
     // },
+    async sizeOf(img) {
+        const imgBuffer = await this.imgToBuffer(img);
+        const sharpImg = sharp_1.default(imgBuffer);
+        return await sharpImg.metadata();
+    },
     async resizeImage(img, size, grayScale) {
         const imgBuffer = await this.imgToBuffer(img);
         let sharpImg = sharp_1.default(imgBuffer)
             .rotate()
-            .resize(parseInt(size.toString()));
+            .resize(size);
         if (grayScale) {
             sharpImg = sharpImg.grayscale();
         }
@@ -50,6 +55,24 @@ exports.default = {
             width: length,
             height: length,
         })
+            .png()
+            .toBuffer();
+    },
+    async putOnWhiteBg(img) {
+        const imgBuffer = await this.imgToBuffer(img);
+        const shImg = sharp_1.default(imgBuffer);
+        const { width, height } = await shImg.metadata();
+        assert_1.default(width && height, 'width and height need to be available for squaring an image');
+        const whiteBg = sharp_1.default({
+            create: {
+                width,
+                height,
+                channels: 4,
+                background: { r: 255, g: 255, b: 255, alpha: 1 },
+            },
+        });
+        return await whiteBg
+            .composite([{ input: await shImg.toBuffer(), left: 0, top: 0 }])
             .png()
             .toBuffer();
     },

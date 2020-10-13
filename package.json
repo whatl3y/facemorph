@@ -1,17 +1,17 @@
 {
-  "name": "morf",
+  "name": "facemorph",
   "version": "0.0.1",
   "author": "Lance Whatley <whatl3y@gmail.com>",
-  "description": "Morph/warp images of faces to each other.",
+  "description": "Create animated gifs that morph faces between each other.",
   "main": "dist/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/whatl3y/morf"
+    "url": "https://github.com/whatl3y/facemorph"
   },
   "scripts": {
     "build": "gulp build",
-    "test": "mocha --exit -r ts-node/register --recursive './src/**/*.spec.ts' --grep morf"
+    "test": "mocha --exit -r ts-node/register --recursive './src/**/*.spec.ts'"
   },
   "devDependencies": {
     "@types/gifencoder": "^2.0.0",
@@ -30,7 +30,6 @@
     "canvas": "^2.6.1",
     "face-api.js": "^0.22.0",
     "gifencoder": "^2.0.1",
-    "image-size": "^0.9.1",
     "minimist": "^1.2.5",
     "png-file-stream": "^1.2.1",
     "sharp": "^0.26.1"

@@ -1,24 +1,21 @@
 import assert from 'assert'
-import imageSize from 'image-size'
 import { createCanvas, ImageData, loadImage } from 'canvas'
 import FacialRecognition from './libs/FacialRecognition'
 import GifCreator from './libs/GifCreator'
-import ImageProcessor, { MorfImage } from './libs/ImageProcessor'
+import ImageProcessor, { FacemorphImage } from './libs/ImageProcessor'
 
 // import ImgWarper from './libs/ImgWarper'
 const ImgWarper = require('./libs/ImgWarper')
 
-const sizeOf = imageSize as any
-
-interface IMorfee {
-  original: MorfImage
+interface IFacemorphee {
+  original: FacemorphImage
   buffer: Buffer
   detections: any
   width: number
   height: number
 }
 
-export default function Morf(frames: number = 20) {
+export default function Facemorph(frames: number = 20) {
   return {
     frames,
 
@@ -27,28 +24,30 @@ export default function Morf(frames: number = 20) {
     },
 
     async createGif(
-      imgs: MorfImage[],
+      imgs: FacemorphImage[],
       gifDelayMs: number = 100
     ): Promise<Buffer> {
       const allFrames = await this.createFrames(imgs)
       const frames = allFrames
         .map((buffers, i) => {
           if (i === 0) return buffers.slice(0, buffers.length - 2)
-          return buffers.slice(1, buffers.length - 1)
+          return buffers.slice(1)
         })
         .flat(1)
-      const { width } = sizeOf(frames[0])
+      const { width } = await ImageProcessor.sizeOf(frames[0])
+      assert(width, 'width should be retrievable')
       const gifer = GifCreator(width, width, gifDelayMs)
       return await gifer.create(...frames)
     },
 
-    async createFrames(imgs: MorfImage[]): Promise<Buffer[][]> {
+    async createFrames(imgs: FacemorphImage[]): Promise<Buffer[][]> {
       const cleanedImgs: Buffer[] = await this.makeImagesConsistent(imgs)
-      const imagePairs: IMorfee[][] = (
+      const imagePairs: IFacemorphee[][] = (
         await Promise.all(
           cleanedImgs.map(
-            async (img: MorfImage): Promise<IMorfee> => {
-              const { width, height } = sizeOf(img)
+            async (img: FacemorphImage): Promise<IFacemorphee> => {
+              const { width, height } = await ImageProcessor.sizeOf(img)
+              assert(width && height, 'width and height should be retrievable')
               const buffer = await ImageProcessor.imgToBuffer(img)
               return {
                 original: img,
@@ -73,7 +72,7 @@ export default function Morf(frames: number = 20) {
       )
 
       const gifImageDataFrames: ImageData[][] = await Promise.all(
-        imagePairs.map(async ([img1, img2]: IMorfee[]) => {
+        imagePairs.map(async ([img1, img2]: IFacemorphee[]) => {
           assert.strictEqual(
             1,
             img1.detections.length,
@@ -99,14 +98,19 @@ export default function Morf(frames: number = 20) {
       )
     },
 
-    async makeImagesConsistent(imgs: MorfImage[]): Promise<Buffer[]> {
+    async makeImagesConsistent(imgs: FacemorphImage[]): Promise<Buffer[]> {
       const [ref, ...rest] = imgs
-      const reference: Buffer = await ImageProcessor.toSquare(ref)
-      const { width } = sizeOf(reference)
+      const refSm: Buffer = await ImageProcessor.resizeImage(ref, 500)
+      const refSq: Buffer = await ImageProcessor.toSquare(refSm)
+      const reference: Buffer = await ImageProcessor.putOnWhiteBg(refSq)
+      const { width } = await ImageProcessor.sizeOf(reference)
+      assert(width, 'width should be retrievable for img')
       const restBuffers = await Promise.all(
         rest.map(async (img) => {
-          const sqBuff = await ImageProcessor.toSquare(img)
-          return await ImageProcessor.resizeImage(sqBuff, width)
+          const smBuff = await ImageProcessor.resizeImage(img, 500)
+          const sqBuff = await ImageProcessor.toSquare(smBuff)
+          const whBuff = await ImageProcessor.putOnWhiteBg(sqBuff)
+          return await ImageProcessor.resizeImage(whBuff, width)
         })
       )
       return [reference, ...restBuffers]
@@ -137,7 +141,7 @@ export default function Morf(frames: number = 20) {
       )
     },
 
-    async getPointDefiners(i1: IMorfee, i2: IMorfee) {
+    async getPointDefiners(i1: IFacemorphee, i2: IFacemorphee) {
       const img1Points = i1.detections[0].landmarks._positions.map(
         ({ _x, _y }: any) => new ImgWarper.Point(_x, _y)
       )

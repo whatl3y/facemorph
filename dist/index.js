@@ -4,15 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert_1 = __importDefault(require("assert"));
-const image_size_1 = __importDefault(require("image-size"));
 const canvas_1 = require("canvas");
 const FacialRecognition_1 = __importDefault(require("./libs/FacialRecognition"));
 const GifCreator_1 = __importDefault(require("./libs/GifCreator"));
 const ImageProcessor_1 = __importDefault(require("./libs/ImageProcessor"));
 // import ImgWarper from './libs/ImgWarper'
 const ImgWarper = require('./libs/ImgWarper');
-const sizeOf = image_size_1.default;
-function Morf(frames = 20) {
+function Facemorph(frames = 20) {
     return {
         frames,
         setFrames(f) {
@@ -24,17 +22,19 @@ function Morf(frames = 20) {
                 .map((buffers, i) => {
                 if (i === 0)
                     return buffers.slice(0, buffers.length - 2);
-                return buffers.slice(1, buffers.length - 1);
+                return buffers.slice(1);
             })
                 .flat(1);
-            const { width } = sizeOf(frames[0]);
+            const { width } = await ImageProcessor_1.default.sizeOf(frames[0]);
+            assert_1.default(width, 'width should be retrievable');
             const gifer = GifCreator_1.default(width, width, gifDelayMs);
             return await gifer.create(...frames);
         },
         async createFrames(imgs) {
             const cleanedImgs = await this.makeImagesConsistent(imgs);
             const imagePairs = (await Promise.all(cleanedImgs.map(async (img) => {
-                const { width, height } = sizeOf(img);
+                const { width, height } = await ImageProcessor_1.default.sizeOf(img);
+                assert_1.default(width && height, 'width and height should be retrievable');
                 const buffer = await ImageProcessor_1.default.imgToBuffer(img);
                 return {
                     original: img,
@@ -61,11 +61,16 @@ function Morf(frames = 20) {
         },
         async makeImagesConsistent(imgs) {
             const [ref, ...rest] = imgs;
-            const reference = await ImageProcessor_1.default.toSquare(ref);
-            const { width } = sizeOf(reference);
+            const refSm = await ImageProcessor_1.default.resizeImage(ref, 500);
+            const refSq = await ImageProcessor_1.default.toSquare(refSm);
+            const reference = await ImageProcessor_1.default.putOnWhiteBg(refSq);
+            const { width } = await ImageProcessor_1.default.sizeOf(reference);
+            assert_1.default(width, 'width should be retrievable for img');
             const restBuffers = await Promise.all(rest.map(async (img) => {
-                const sqBuff = await ImageProcessor_1.default.toSquare(img);
-                return await ImageProcessor_1.default.resizeImage(sqBuff, width);
+                const smBuff = await ImageProcessor_1.default.resizeImage(img, 500);
+                const sqBuff = await ImageProcessor_1.default.toSquare(smBuff);
+                const whBuff = await ImageProcessor_1.default.putOnWhiteBg(sqBuff);
+                return await ImageProcessor_1.default.resizeImage(whBuff, width);
             }));
             return [reference, ...restBuffers];
         },
@@ -109,4 +114,4 @@ function Morf(frames = 20) {
         },
     };
 }
-exports.default = Morf;
+exports.default = Facemorph;

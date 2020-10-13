@@ -15,14 +15,14 @@ const delay = argv.d || argv.delay || 40;
 assert_1.default(images, 'images should be provided');
 (async function createGif() {
     try {
-        const morf = index_1.default(frames);
-        const gifBuffer = await morf.createGif(images instanceof Array ? images : [images], delay);
-        const newFile = path_1.default.join(__dirname, `morf_${Date.now()}.gif`);
+        const facemorph = index_1.default(frames);
+        const gifBuffer = await facemorph.createGif(images instanceof Array ? images : [images], delay);
+        const newFile = path_1.default.join(__dirname, `facemorph_${Date.now()}.gif`);
         await fs_1.default.promises.writeFile(newFile, gifBuffer);
         console.log(`Your new gif: ${newFile}`);
     }
     catch (err) {
-        console.error(`Error creating morg gif`, err);
+        console.error(`Error creating facemorph gif`, err);
     }
     finally {
         process.exit();
