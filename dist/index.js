@@ -51,14 +51,19 @@ function Facemorph(frames = 20) {
             }, []);
             assert_1.default(imagePairs.length > 0, 'should have at least one pair of images to morph');
             const gifImageDataFrames = await Promise.all(imagePairs.map(async ([img1, img2]) => {
-                assert_1.default.strictEqual(1, img1.detections.length, 'image should only detect one face');
-                assert_1.default.strictEqual(1, img2.detections.length, 'image should only detect one face');
+                try {
+                    assert_1.default.strictEqual(1, img1.detections.length, 'image should only detect one face');
+                    assert_1.default.strictEqual(1, img2.detections.length, 'image should only detect one face');
+                }
+                catch (err) {
+                    return null;
+                }
                 const [point1, point2] = await this.getPointDefiners(img1, img2);
                 const animator = new ImgWarper.Animator(point1, point2);
                 animator.generate(this.frames);
                 return animator.frames;
             }));
-            return await this.getBuffersFromFrames(gifImageDataFrames, imagePairs[0][0].width, imagePairs[0][0].height);
+            return await this.getBuffersFromFrames(gifImageDataFrames.filter((g) => !!g), imagePairs[0][0].width, imagePairs[0][0].height);
         },
         async makeImagesConsistent(imgs) {
             const [ref, ...rest] = imgs;

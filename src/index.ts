@@ -74,16 +74,20 @@ export default function Facemorph(frames: number = 20) {
 
       const gifImageDataFrames: ImageData[][] = await Promise.all(
         imagePairs.map(async ([img1, img2]: IFacemorphee[]) => {
-          assert.strictEqual(
-            1,
-            img1.detections.length,
-            'image should only detect one face'
-          )
-          assert.strictEqual(
-            1,
-            img2.detections.length,
-            'image should only detect one face'
-          )
+          try {
+            assert.strictEqual(
+              1,
+              img1.detections.length,
+              'image should only detect one face'
+            )
+            assert.strictEqual(
+              1,
+              img2.detections.length,
+              'image should only detect one face'
+            )
+          } catch (err) {
+            return null
+          }
 
           const [point1, point2] = await this.getPointDefiners(img1, img2)
           const animator = new ImgWarper.Animator(point1, point2)
@@ -93,7 +97,7 @@ export default function Facemorph(frames: number = 20) {
       )
 
       return await this.getBuffersFromFrames(
-        gifImageDataFrames,
+        gifImageDataFrames.filter((g) => !!g),
         imagePairs[0][0].width,
         imagePairs[0][0].height
       )
