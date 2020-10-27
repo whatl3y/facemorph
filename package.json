@@ -1,6 +1,6 @@
 {
   "name": "facemorph",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Lance Whatley <whatl3y@gmail.com>",
   "description": "Create animated GIFs that morph faces to each other in Node.js.",
   "main": "dist/index.js",
