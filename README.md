@@ -21,6 +21,8 @@ $ npm install facemorph
 
 ## Simple Usage
 
+### API
+
 ```js
 import fs from 'fs'
 import Facemorph from 'facemorph'
@@ -35,6 +37,13 @@ const gifBuffer = await facemorph.createGif([
 await fs.promises.writeFile(`my.gif`, gifBuffer)
 ```
 
+### CLI
+
+```
+$ node node_modules/facemorph/dist/tasks/createGif -i path/to/img1.jpg -i path/to/img2.png
+Your new gif: /path/to/output/facemorph_#############.gif
+```
+
 ## API
 
 ### constructor
@@ -46,7 +55,7 @@ import Facemorph from 'facemorph'
 const facemorph = Facemorph(/* frames */)
 ```
 
-### facemorph.createGif
+### createGif
 
 Create a GIF with morphed faces between all provided images.
 
@@ -57,7 +66,7 @@ Create a GIF with morphed faces between all provided images.
 await facemorph.createGif(images /*, delayMs, repeat */) // : Promise<Buffer>
 ```
 
-### facemorph.createFrames
+### createFrames
 
 Create an array of Buffers that are images of all the frames to be used
 to create an animated GIF of morphed faces. This is used inside of `createGif`,
@@ -69,7 +78,7 @@ you'd like with them.
 await facemorph.createFrames(images) // : Promise<Buffer[][]>
 ```
 
-### facemorph.setFrames
+### setFrames
 
 Reset the number of frames between each face morph.
 
