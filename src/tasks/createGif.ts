@@ -19,7 +19,7 @@ assert(images || dir, '-i, --images or -d, --dir should be provided')
       let files = await fs.promises.readdir(dir)
       // TODO Adding all files in reverse to the array to allow for
       // reversing the animation but should this be configurable?
-      files = files.concat(files.reverse())
+      files = files.concat(files.reverse().slice(1, -1))
       gifBuffer = await facemorph.createGif(
         files.map((f) => path.join(dir, f)),
         delay
